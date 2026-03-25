@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
     enum: ["user", "admin"],
     default: "user",
   },
+  isBanned: {
+    type: Boolean,
+    default: false,
+  },
   winnings: [
     {
       drawId: { type: mongoose.Schema.Types.ObjectId, ref: "Draw" },
@@ -37,6 +41,7 @@ const userSchema = new mongoose.Schema({
       },
     },
   ],
+
   subscriptionStatus: {
     type: String,
     enum: ["active", "inactive"],
