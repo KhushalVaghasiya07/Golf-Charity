@@ -19,6 +19,32 @@ const userSchema = new mongoose.Schema({
   isSubscribed: { type: Boolean, default: true },
   scores: [scoreSchema],
   charity: String,
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user",
+  },
+  winnings: [
+    {
+      drawId: { type: mongoose.Schema.Types.ObjectId, ref: "Draw" },
+      tier: String,
+      amount: Number,
+      proof: String,
+      status: {
+        type: String,
+        enum: ["pending", "approved", "rejected", "paid"],
+        default: "pending",
+      },
+    },
+  ],
+  subscriptionStatus: {
+    type: String,
+    enum: ["active", "inactive"],
+    default: "inactive",
+  },
+  subscriptionEndDate: {
+    type: Date,
+  },
 });
 
 module.exports = mongoose.model("User", userSchema);

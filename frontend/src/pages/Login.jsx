@@ -13,16 +13,19 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     setError("");
+
     try {
       const res = await API.post("/auth/login", { email, password });
+
       localStorage.setItem("token", res.data.token);
-      if (res.data.isAdmin) {
-        navigate("/admin");
-      } else {
-        navigate("/dashboard");
-      }
+
+      const payload = JSON.parse(atob(res.data.token.split(".")[1]));
+
+      window.location.href =
+        payload.role === "admin" ? "/admin" : "/dashboard";
+
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid credentials. Please try again.");
+      setError(err.response?.data?.message || "Invalid credentials.");
     } finally {
       setLoading(false);
     }
