@@ -22,13 +22,20 @@ export default function Admin() {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) return;
+
+      if (!token) {
+        setLoadingUsers(false);
+        return;
+      }
 
       const res = await API.get("/admin/users");
       setUsers(res.data);
+
     } catch (err) {
-      console.error(err);
-      showToast("Failed to load users.", "error");
+      // 🔥 IGNORE FIRST LOAD AUTH ERROR
+      if (err.response?.status !== 401) {
+        showToast("Failed to load users.", "error");
+      }
     } finally {
       setLoadingUsers(false);
     }
@@ -75,16 +82,20 @@ export default function Admin() {
   useEffect(() => {
     fetchUsers();
 
-    // 🔥 LOAD EXISTING DRAW
+    const token = localStorage.getItem("token");
+
+    if (!token) return;
+
     API.get("/admin/latest-draw")
       .then((res) => {
         if (res.data) {
           setDraw(res.data);
         }
       })
-      .catch((err) => {
-        console.log("Draw fetch error", err);
+      .catch(() => {
+        // ignore error on first load
       });
+
   }, []);
 
   // ✅ ADDED (timer logic)
